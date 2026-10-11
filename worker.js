@@ -28,40 +28,81 @@ function rupiah(value) {
 }
 
 async function notifyDiscord(env, order) {
-  if (!env.DISCORD_WEBHOOK_URL) return;
+  // Secret wajib tersedia. Jangan menganggap pengiriman berhasil
+  // jika secret tidak dikonfigurasi.
+  if (
+    typeof env.DISCORD_WEBHOOK_URL !== "string" ||
+    !env.DISCORD_WEBHOOK_URL.trim()
+  ) {
+    throw new Error(
+      "Secret DISCORD_WEBHOOK_URL belum dikonfigurasi."
+    );
+  }
 
   const response = await fetch(env.DISCORD_WEBHOOK_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       username: "Robuxly Orders",
-      allowed_mentions: { parse: [] },
+      allowed_mentions: {
+        parse: []
+      },
       embeds: [{
         title: "🛒 Pesanan Robux Baru",
         color: 0x16834a,
         fields: [
-          { name: "ID Pesanan", value: order.id },
-          { name: "Username Roblox", value: order.username },
-          { name: "WhatsApp", value: order.whatsapp },
-          { name: "Paket", value: `${order.robux} Robux` },
-          { name: "Total", value: rupiah(order.price) },
-          { name: "Pembayaran", value: "Belum diverifikasi" },
-          { name: "Status", value: "Menunggu pembayaran" }
+          {
+            name: "ID Pesanan",
+            value: String(order.id)
+          },
+          {
+            name: "Username Roblox",
+            value: String(order.username)
+          },
+          {
+            name: "WhatsApp",
+            value: String(order.whatsapp)
+          },
+          {
+            name: "Paket",
+            value: `${order.robux} Robux`
+          },
+          {
+            name: "Total",
+            value: rupiah(order.price)
+          },
+          {
+            name: "Pembayaran",
+            value: "Belum diverifikasi"
+          },
+          {
+            name: "Status",
+            value: STATUS_LABELS.waiting_payment
+          }
         ],
-        footer: { text: "Robuxly • Notifikasi pesanan otomatis" },
+        footer: {
+          text: "Robuxly • Notifikasi pesanan otomatis"
+        },
         timestamp: new Date().toISOString()
       }]
     })
   });
 
   if (!response.ok) {
-    throw new Error("Discord webhook gagal: " + response.status);
+    // Hanya catat kode HTTP, jangan catat URL webhook.
+    throw new Error(
+      `Discord webhook gagal dengan HTTP ${response.status}.`
+    );
   }
 }
 
 async function createOrder(request, env) {
   if (!env.DB) {
-    return json({ error: "Database belum dikonfigurasi." }, 503);
+    return json({
+      error: "Database belum dikonfigurasi."
+    }, 503);
   }
 
   let body;
@@ -69,7 +110,9 @@ async function createOrder(request, env) {
   try {
     body = await request.json();
   } catch {
-    return json({ error: "Format permintaan tidak valid." }, 400);
+    return json({
+      error: "Format permintaan tidak valid."
+    }, 400);
   }
 
   if (
@@ -78,7 +121,9 @@ async function createOrder(request, env) {
     typeof body.whatsapp !== "string" ||
     typeof body.packageId !== "string"
   ) {
-    return json({ error: "Data pesanan belum lengkap." }, 400);
+    return json({
+      error: "Data pesanan belum lengkap."
+    }, 400);
   }
 
   const username = body.username.trim();
@@ -87,15 +132,21 @@ async function createOrder(request, env) {
   const selected = PACKAGES[packageId];
 
   if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
-    return json({ error: "Username Roblox tidak valid." }, 400);
+    return json({
+      error: "Username Roblox tidak valid."
+    }, 400);
   }
 
   if (!/^[+0-9][0-9 ()-]{7,18}$/.test(whatsapp)) {
-    return json({ error: "Nomor WhatsApp tidak valid." }, 400);
+    return json({
+      error: "Nomor WhatsApp tidak valid."
+    }, 400);
   }
 
   if (!selected) {
-    return json({ error: "Paket tidak tersedia." }, 400);
+    return json({
+      error: "Paket tidak tersedia."
+    }, 400);
   }
 
   const order = {
@@ -107,6 +158,8 @@ async function createOrder(request, env) {
     price: selected.price
   };
 
+  // Simpan pesanan terlebih dahulu.
+  // Kegagalan notifikasi tidak menghapus pesanan yang sudah tersimpan.
   try {
     await env.DB.prepare(`
       INSERT INTO orders
@@ -122,21 +175,31 @@ async function createOrder(request, env) {
     ).run();
   } catch (error) {
     console.error("Gagal menyimpan pesanan:", error);
-    return json({ error: "Gagal menyimpan pesanan. Coba kembali." }, 500);
+
+    return json({
+      error: "Gagal menyimpan pesanan. Coba kembali."
+    }, 500);
   }
 
-  let notification = "sent";
+  let notification = "failed";
 
   try {
     await notifyDiscord(env, order);
+    notification = "sent";
   } catch (error) {
-    notification = "failed";
-    console.error("Notifikasi Discord gagal:", error);
+    // Jangan pernah mencatat URL webhook atau secret.
+    console.error(
+      "Notifikasi Discord gagal:",
+      error instanceof Error ? error.message : "Kesalahan tidak diketahui"
+    );
   }
 
   return json({
     ok: true,
     notification,
+    message: notification === "sent"
+      ? "Pesanan tersimpan dan permintaan notifikasi diterima Discord."
+      : "Pesanan tersimpan, tetapi notifikasi Discord gagal dikirim.",
     order: {
       id: order.id,
       username: order.username,
@@ -150,32 +213,47 @@ async function createOrder(request, env) {
 
 async function getOrder(request, env) {
   if (!env.DB) {
-    return json({ error: "Database belum dikonfigurasi." }, 503);
+    return json({
+      error: "Database belum dikonfigurasi."
+    }, 503);
   }
 
   const url = new URL(request.url);
   const id = url.searchParams.get("id") || "";
 
   if (!/^RBX-[A-Fa-f0-9]{32}$/.test(id)) {
-    return json({ error: "ID pesanan tidak valid." }, 400);
+    return json({
+      error: "ID pesanan tidak valid."
+    }, 400);
   }
 
   let order;
 
   try {
     order = await env.DB.prepare(`
-      SELECT id, username, robux, price, payment_status, order_status
+      SELECT
+        id,
+        username,
+        robux,
+        price,
+        payment_status,
+        order_status
       FROM orders
       WHERE id = ?
       LIMIT 1
     `).bind(id).first();
   } catch (error) {
     console.error("Gagal membaca database:", error);
-    return json({ error: "Gagal membaca database." }, 500);
+
+    return json({
+      error: "Gagal membaca database."
+    }, 500);
   }
 
   if (!order) {
-    return json({ error: "Pesanan tidak ditemukan." }, 404);
+    return json({
+      error: "Pesanan tidak ditemukan."
+    }, 404);
   }
 
   return json({
@@ -206,13 +284,11 @@ export default {
         return getOrder(request, env);
       }
 
-      return json(
-        { error: "Metode tidak diizinkan." },
-        405
-      );
+      return json({
+        error: "Metode tidak diizinkan."
+      }, 405);
     }
 
     return env.ASSETS.fetch(request);
   }
 };
-           
