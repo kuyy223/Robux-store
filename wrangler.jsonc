@@ -12,8 +12,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "robux-store-db",
-      "database_id": "94f3150c-7165-4550-974b-2272be3f183b"
+      "database_name": "robux-store-db-v2",
+      "database_id": "3faebab1-908e-495c-9fc0-87cf0ddff967"
     }
   ]
 }
