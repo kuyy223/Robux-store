@@ -1,0 +1,9 @@
+
+worker.js
+wrangler.jsonc
+schema.sql
+functions/
+.git/
+.github/
+node_modules/
+.assetsignore
