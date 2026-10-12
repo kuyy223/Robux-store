@@ -3,166 +3,292 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5faf6">
-  <meta name="description" content="Top up Robux Roblox via username dengan proses aman dan verifikasi pembayaran manual.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101610">
+  <meta name="description" content="Robuxly - layanan pembelian Robux Roblox.">
   <title>Robuxly — Top Up Robux</title>
   <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <header class="navbar">
-    <a class="brand" href="#">
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="Robuxly beranda">
       <span class="brand-icon">R</span>
-      <span>robux<span class="green">ly.</span></span>
+      <span>Robuxly</span>
     </a>
-    <a href="#cek-pesanan" class="nav-link">Cek Pesanan ↗</a>
+    <nav aria-label="Navigasi utama">
+      <a href="#topup">Top Up</a>
+      <a href="#checkout">Pesan</a>
+      <a href="#tracking">Tracking</a>
+    </nav>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="hero-tag"><span class="dot"></span> ROBLOX TOP UP STORE</div>
-      <h1>Top up Robux,<br><span class="green">lebih simpel.</span></h1>
-      <p>Pilih paket Robux, masukkan username Roblox, lalu tunggu verifikasi pembayaran oleh admin.</p>
-      <a href="#paket" class="primary-btn hero-btn">Pilih Paket <span>↓</span></a>
-      <div class="trust-row">
-        <span>✓ Harga transparan</span>
-        <span>✓ Verifikasi manual</span>
-        <span>✓ Bantuan admin</span>
+    <section class="hero" id="topup">
+      <p class="eyebrow">ROBLOX DIGITAL STORE</p>
+      <h1>Top Up Robux,<br><span>lebih praktis.</span></h1>
+      <p class="hero-description">
+        Pilih jumlah Robux, periksa harga, lalu buat pesanan.
+      </p>
+      <a class="primary-button" href="#checkout">Mulai Pesan <span>→</span></a>
+    </section>
+
+    <section class="section" aria-labelledby="stock-heading">
+      <div class="section-heading">
+        <p class="eyebrow">INFORMASI TOKO</p>
+        <h2 id="stock-heading">Stok & kuota</h2>
+      </div>
+
+      <div class="stock-grid">
+        <article class="stock-card">
+          <span class="stock-label">Stok tersedia</span>
+          <strong id="stock-available">Memuat...</strong>
+          <p>Persediaan Robux toko</p>
+        </article>
+
+        <article class="stock-card">
+          <span class="stock-label">Pengiriman bulanan</span>
+          <strong id="stock-used">Memuat...</strong>
+          <div
+            id="stock-progress"
+            class="stock-progress"
+            role="progressbar"
+            aria-label="Pemakaian kuota bulanan"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          ></div>
+          <p>Kuota diatur berdasarkan bulan berjalan.</p>
+        </article>
       </div>
     </section>
 
-    <section class="section" id="paket">
+    <section class="section" aria-labelledby="price-heading">
       <div class="section-heading">
-        <div>
-          <span class="eyebrow">PILIH SESUAI KEBUTUHAN</span>
-          <h2>Paket Robux</h2>
-        </div>
-        <span class="live-label"><span class="dot"></span> Katalog</span>
+        <p class="eyebrow">HARGA TRANSPARAN</p>
+        <h2 id="price-heading">Pilih jumlah Robux</h2>
+        <p>Tekan pilihan untuk mengisi jumlah secara otomatis.</p>
       </div>
 
-      <div class="notice">
-        <span class="notice-icon">i</span>
-        <p>Harga di bawah adalah contoh awal. Konfirmasikan harga dan jumlah Robux yang benar sebelum toko dipublikasikan.</p>
+      <div class="package-grid">
+        <button type="button" class="package-card" data-package="50">
+          <strong>50 Robux</strong>
+          <span>Rp8.000</span>
+        </button>
+        <button type="button" class="package-card" data-package="100">
+          <strong>100 Robux</strong>
+          <span>Rp16.000</span>
+        </button>
+        <button type="button" class="package-card" data-package="200">
+          <strong>200 Robux</strong>
+          <span>Rp32.000</span>
+        </button>
+        <button type="button" class="package-card" data-package="400">
+          <strong>400 Robux</strong>
+          <span>Rp64.000</span>
+        </button>
+        <button type="button" class="package-card" data-package="500">
+          <strong>500 Robux</strong>
+          <span>Rp77.500</span>
+        </button>
+        <button type="button" class="package-card" data-package="1000">
+          <strong>1.000 Robux</strong>
+          <span>Rp155.000</span>
+        </button>
       </div>
 
-      <div class="product-grid" id="product-grid">
-        <article class="product-card">
-          <div class="robux-symbol">R$</div>
-          <span class="product-label">PAKET STARTER</span>
-          <h3>80 Robux</h3>
-          <p class="product-desc">Untuk kebutuhan kecil</p>
-          <div class="price">Rp 15.000</div>
-          <button class="select-btn" data-package="80" type="button">Pilih Paket <span>→</span></button>
-        </article>
-
-        <article class="product-card featured">
-          <span class="popular-badge">Pilihan populer</span>
-          <div class="robux-symbol">R$</div>
-          <span class="product-label">PAKET FAVORIT</span>
-          <h3>400 Robux</h3>
-          <p class="product-desc">Pilihan untuk bermain</p>
-          <div class="price">Rp 65.000</div>
-          <button class="select-btn" data-package="400" type="button">Pilih Paket <span>→</span></button>
-        </article>
-
-        <article class="product-card">
-          <div class="robux-symbol">R$</div>
-          <span class="product-label">PAKET BESAR</span>
-          <h3>800 Robux</h3>
-          <p class="product-desc">Lebih banyak pilihan</p>
-          <div class="price">Rp 125.000</div>
-          <button class="select-btn" data-package="800" type="button">Pilih Paket <span>→</span></button>
-        </article>
-      </div>
-      <p class="fine-print">Jumlah bersih yang diterima bisa berbeda berdasarkan metode pengiriman. Pastikan detail paket dikonfirmasi sebelum pembayaran.</p>
+      <p class="price-note">
+        Tarif Rp160/Robux untuk 50–400 Robux dan Rp155/Robux untuk
+        jumlah di atas 400 Robux. Jumlah lain dihitung otomatis.
+      </p>
     </section>
 
-    <section class="section order-section" id="checkout">
+    <section class="section checkout-section" id="checkout">
       <div class="section-heading">
-        <div>
-          <span class="eyebrow">CHECKOUT</span>
-          <h2>Detail pesanan</h2>
-        </div>
-        <span class="step-label">01 / 02</span>
+        <p class="eyebrow">BUAT PESANAN</p>
+        <h2>Detail pembelian</h2>
+        <p>Pastikan username Roblox dan nomor WhatsApp sudah benar.</p>
       </div>
 
-      <form id="order-form" class="form-card">
+      <form id="order-form" class="checkout-form">
         <label for="username">Username Roblox</label>
-        <input id="username" name="username" required
-          minlength="3" maxlength="20"
-          pattern="[A-Za-z0-9_]+"
-          placeholder="Contoh: PlayerRoblox123"
-          autocomplete="off">
-        <small>Masukkan username, bukan password atau cookie akun.</small>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Masukkan username Roblox"
+          minlength="3"
+          maxlength="20"
+          autocomplete="off"
+          required
+        >
 
         <label for="whatsapp">Nomor WhatsApp</label>
-        <input id="whatsapp" name="whatsapp" type="tel" required
-          maxlength="20" placeholder="Contoh: 08xxxxxxxxxx"
-          autocomplete="tel">
+        <input
+          type="tel"
+          id="whatsapp"
+          name="whatsapp"
+          placeholder="Contoh: 081234567890"
+          autocomplete="tel"
+          required
+        >
 
-        <label for="package">Paket Robux</label>
-        <select id="package" name="package" required>
-          <option value="80">80 Robux — Rp 15.000</option>
-          <option value="400" selected>400 Robux — Rp 65.000</option>
-          <option value="800">800 Robux — Rp 125.000</option>
+        <label for="robux-amount">Jumlah Robux</label>
+        <input
+          type="number"
+          id="robux-amount"
+          name="robux"
+          min="50"
+          max="5000"
+          step="1"
+          value="400"
+          inputmode="numeric"
+          required
+        >
+
+        <!-- Kompatibilitas dengan app.js dan formulir paket lama. -->
+        <select id="package" name="package" hidden aria-hidden="true" tabindex="-1">
+          <option value="50">50 Robux</option>
+          <option value="100">100 Robux</option>
+          <option value="200">200 Robux</option>
+          <option value="300">300 Robux</option>
+          <option value="400" selected>400 Robux</option>
+          <option value="500">500 Robux</option>
+          <option value="800">800 Robux</option>
+          <option value="1000">1.000 Robux</option>
+          <option value="5000">5.000 Robux</option>
         </select>
 
-        <div class="summary">
-          <span>Total pesanan</span>
-          <strong id="total-price">Rp 65.000</strong>
+        <div class="price-summary">
+          <div>
+            <span>Tarif per Robux</span>
+            <strong id="rate-value">Rp160/Robux</strong>
+          </div>
+          <div>
+            <span>Total pembayaran</span>
+            <strong id="total-price">Rp64.000</strong>
+          </div>
         </div>
 
-        <button class="primary-btn submit-btn" id="submit-order" type="submit">
-          Buat Pesanan <span>→</span>
+        <button type="submit" id="submit-order" class="primary-button">
+          Buat Pesanan →
         </button>
-        <p class="form-message" id="form-message" role="status" aria-live="polite"></p>
-        <p class="fine-print">Pesanan belum dianggap lunas sampai pembayaran diperiksa dan dikonfirmasi oleh admin.</p>
+
+        <p id="form-message" class="form-message" aria-live="polite"></p>
       </form>
 
-      <div class="result-card hidden" id="order-result" aria-live="polite">
-        <div class="success-icon">✓</div>
-        <span class="eyebrow">PESANAN BERHASIL DIBUAT</span>
-        <h3>Simpan ID pesananmu</h3>
-        <p>Gunakan ID ini saat menghubungi admin dan melakukan pembayaran.</p>
-        <div class="order-id-row">
-          <code id="result-id"></code>
-          <button type="button" class="copy-btn" id="copy-id">Salin</button>
-        </div>
-        <div class="result-detail" id="result-detail"></div>
-        <p class="fine-print">Jangan mengirim bukti pembayaran palsu. Tunggu instruksi pembayaran resmi dari admin.</p>
-      </div>
+      
+<section id="order-result" class="order-result hidden" aria-live="polite">
+  <div class="invoice-header">
+    <div>
+      <p class="eyebrow">ROBUXLY DIGITAL STORE</p>
+      <h3>Invoice Pesanan</h3>
+      <p class="invoice-subtitle">Pesanan berhasil dibuat dan menunggu pemeriksaan admin.</p>
+    </div>
+    <span class="invoice-status">Menunggu Admin</span>
+  </div>
+
+  <div class="invoice-id-box">
+    <span>ID Pesanan</span>
+    <strong id="result-id">-</strong>
+    <button type="button" id="copy-id" class="secondary-button">
+      Salin ID Pesanan
+    </button>
+  </div>
+
+  <div class="invoice-details">
+    <div class="invoice-row">
+      <span>Username Roblox</span>
+      <strong id="invoice-username">-</strong>
+    </div>
+    <div class="invoice-row">
+      <span>Jumlah Robux</span>
+      <strong id="invoice-robux">-</strong>
+    </div>
+    <div class="invoice-row">
+      <span>Tarif per Robux</span>
+      <strong id="invoice-rate">-</strong>
+    </div>
+    <div class="invoice-row invoice-total">
+      <span>Total pesanan</span>
+      <strong id="invoice-price">-</strong>
+    </div>
+    <div class="invoice-row">
+      <span>Status pembayaran</span>
+      <strong id="invoice-payment">Belum dikonfirmasi</strong>
+    </div>
+  </div>
+
+  <div class="invoice-notice">
+    <h4>Langkah selanjutnya</h4>
+    <ol>
+      <li>Admin akan memeriksa detail pesanan kamu.</li>
+      <li>Tunggu pesan WhatsApp dari admin untuk melanjutkan transaksi dan mendapatkan instruksi pembayaran.</li>
+      <li>Bayar sesuai instruksi resmi admin dan simpan bukti pembayaran.</li>
+      <li>Tunggu konfirmasi pembayaran dan informasi proses pengiriman Robux.</li>
+    </ol>
+    <p>Pesanan ini belum berarti pembayaran berhasil atau Robux sudah dikirim.</p>
+  </div>
+
+  <div class="invoice-rules">
+    <h4>Rules transaksi Robuxly</h4>
+    <ul>
+      <li>Pengguna wajib berusia minimal 18 tahun.</li>
+      <li>Akun Roblox wajib mengaktifkan verifikasi 2 langkah (2-Step Verification/2FA).</li>
+      <li>Pastikan username Roblox dan jumlah Robux sudah benar.</li>
+      <li>Jangan pernah memberikan password, kode OTP, kode pemulihan, atau cookie akun kepada siapa pun, termasuk admin.</li>
+      <li>Jangan melakukan pembayaran sebelum menerima instruksi pembayaran yang jelas dari admin.</li>
+      <li>Simpan ID invoice untuk memeriksa status pesanan.</li>
+    </ul>
+  </div>
+
+  <p id="result-detail" class="invoice-footer"></p>
+
+  <button
+    type="button"
+    class="secondary-button invoice-track-button"
+    id="invoice-track"
+  >
+    Lacak Pesanan
+  </button>
+</section>
+
     </section>
 
-    <section class="section tracking-section" id="cek-pesanan">
-      <span class="eyebrow">ORDER TRACKING</span>
-      <h2>Cek status pesanan</h2>
-      <p class="section-description">Masukkan ID pesanan yang kamu terima setelah checkout.</p>
-      <form id="tracking-form" class="tracking-form">
-        <input id="tracking-id" required maxlength="40"
-          placeholder="Contoh: RBX-XXXXXXXXXX">
-        <button type="submit" class="primary-btn">Cek</button>
+    <section class="section" id="tracking">
+      <div class="section-heading">
+        <p class="eyebrow">LACAK PESANAN</p>
+        <h2>Cek status pesanan</h2>
+        <p>Masukkan ID pesanan yang kamu dapatkan saat checkout.</p>
+      </div>
+
+      <form id="tracking-form" class="checkout-form">
+        <label for="tracking-id">ID Pesanan</label>
+        <input
+          type="text"
+          id="tracking-id"
+          name="tracking-id"
+          placeholder="Contoh: RBX-..."
+          autocomplete="off"
+          required
+        >
+        <button type="submit" class="secondary-button">
+          Periksa Pesanan
+        </button>
       </form>
+
       <div id="tracking-result" class="tracking-result hidden" aria-live="polite"></div>
-    </section>
-
-    <section class="section steps-section">
-      <span class="eyebrow">CARA PEMBELIAN</span>
-      <h2>Empat langkah mudah</h2>
-      <div class="steps">
-        <div class="step"><span>01</span><div><b>Pilih paket</b><p>Tentukan paket yang tersedia.</p></div></div>
-        <div class="step"><span>02</span><div><b>Isi username</b><p>Periksa username dan nomor WhatsApp.</p></div></div>
-        <div class="step"><span>03</span><div><b>Bayar & verifikasi</b><p>Ikuti instruksi admin dan tunggu pembayaran diverifikasi.</p></div></div>
-        <div class="step"><span>04</span><div><b>Proses pesanan</b><p>Admin memproses pengiriman dan memperbarui status.</p></div></div>
-      </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <a class="brand" href="#"><span class="brand-icon">R</span><span>robux<span class="green">ly.</span></span></a>
-    <p>Top up dengan jelas. Transaksi dengan nyaman.</p>
-    <small>Fan-made store. Tidak berafiliasi dengan Roblox Corporation.</small>
+  <footer class="site-footer">
+    <a class="brand" href="#">
+      <span class="brand-icon">R</span>
+      <span>Robuxly</span>
+    </a>
+    <p>Top up Robux dengan informasi harga yang transparan.</p>
+    <small>© Robuxly. Roblox adalah merek dagang pemiliknya masing-masing.</small>
   </footer>
-
-  <script src="app.js" defer></script>
 </body>
-</html>
+        </html>
+        
